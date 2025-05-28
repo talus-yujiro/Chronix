@@ -1,0 +1,31 @@
+{
+    "name": "Chronix",
+    "short_name": "Chronix",
+    "description": "他の人に共有できる学習管理アプリ。時間(Chrono)を有効活用して定着(fix)させよう。",
+    "start_url": "index.html",
+    "theme_color": "#121212",
+    "background_color": "#121212",
+    "display": "standalone",
+    "icons": [
+      {
+        "src": "favicon.ico",
+        "sizes": "12x12 24x24 48x48 64x64"
+      },
+      {
+        "src": "chronix-180x180.png",
+        "sizes": "180x180"
+      },
+      {
+        "src": "chornix-192x192.png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "chronix-250x250.png",
+        "sizes": "250x250"
+      },
+      {
+        "src": "chronix-500x500.png",
+        "sizes": "500x500"
+      }
+    ]
+  }

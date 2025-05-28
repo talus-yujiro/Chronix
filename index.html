@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <!--文字コード・互換モード-->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge, chrome=1">
+    <title>学習管理アプリ</title>
+    <!--ビューポート-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--css-->
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.2/css/all.css">
+    <!--web情報-->
+    <meta name="keywords" content="学習管理, Chronix, 学習, 時間">
+    <meta name="description" content="他の人に共有できる学習管理アプリ。時間(Chrono)を有効活用して定着(fix)させよう。">
+    <meta name="author" content="©️ 2025 talus">
+    <!--更新日時-->
+    <meta name="date" content="2025-02-28">
+    <meta name="creation_date" content="2025-02-19">
+    <!--URL-->
+    <link rel="canonical" href="https://talus-yujiro.github.io/one-grade-website/">
+    <!--アイコン-->
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="./png" sizes="180x180">
+    <!--windows-->
+    <meta name="msapplication-config" content="none">
+    <meta name="msapplication-TileImage" content="./img/mitoichi-fuzoku.png">
+    <!--safari-->
+    <link rel="mask-icon" href="">
+    <!--Android-->
+    <meta name="theme-color" content="#5787ff">
+    <link rel="icon" type="image/png" href="./img/mitoichi-fuzoku-192x192.png" sizes="192x192">
+    <!--CDN-->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <!--マニフェスト-->
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Chronix</h1>
+    </header>
+
+    <main>
+        <!-- 学習記録 -->
+        <section id="record" class="tab active">
+            <h2>学習を記録</h2>
+            <!-- 教科選択ボタン -->
+            <div id="subjectButtons" class="subject-button-group"></div>
+            <input type="hidden" id="subjectInput" required>
+            <input type="number" id="timeInput" placeholder="時間（分）" min="1">
+            <input type="text" id="studyInput" placeholder="内容">
+            <button onclick="saveStudy()">記録</button>
+        </section>
+
+        <!-- 履歴表示 -->
+        <section id="history" class="tab">
+            <h2>履歴</h2>
+            <select id="filterSelect" onchange="loadStudies()">
+                <option value="">すべて表示</option>
+            </select>
+            <br>
+            <label for="historyRangeSelect">表示範囲：</label>
+            <select id="historyRangeSelect" onchange="loadStudies()">
+                <option value="day">今日</option>
+                <option value="week">今週</option>
+                <option value="month">今月</option>
+                <option value="year">今年</option>
+                <option value="all" selected>全期間</option>
+            </select>
+            <p id="totalTime"></p>
+            <ul id="studyList"></ul>
+        </section>
+
+        <!-- グラフ -->
+        <section id="graph" class="tab">
+            <h2>学習グラフ</h2>
+            <canvas id="studyChart" width="300" height="300"></canvas>
+        </section>
+
+        <!-- 設定 -->
+        <section id="settings" class="tab">
+            <h2>設定</h2>
+            <h3>ユーザー名</h3>
+            <label for="username">ユーザー名: <input type="text" name="username" id="userName"
+                oninput="settingUsername()"></label>
+            <p>追加した教科は自動的に選択肢に保存されます。</p>
+
+            <h3>教科を追加</h3>
+            <input type="text" id="newSubjectInput" placeholder="教科名を入力">
+            <button onclick="addSubject()">追加</button>
+            <ul id="subjectList"></ul>
+        </section>
+
+    </main>
+
+    <nav class="bottom-nav">
+        <button onclick="switchTab('record')"><i class="fa-solid fa-pen"></i> 記録</button>
+        <button onclick="switchTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> 履歴</button>
+        <button onclick="switchTab('graph')"><i class="fa-solid fa-chart-bar"></i> グラフ</button>
+        <button onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> 設定</button>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
