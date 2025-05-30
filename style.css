@@ -6,6 +6,10 @@
     src: url('Geo-Regular.ttf');
 }
 
+html {
+    background: #121212;
+}
+
 body {
     margin: 0;
     font-family: 'Inter', 'Noto Sans JP' sans-serif;
