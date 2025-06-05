@@ -34,7 +34,7 @@
     <!--CDN-->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <!--マニフェスト-->
-    <link rel="manifest" href="manifest.json?v=2">
+    <link rel="manifest" href="manifest.json?v=3">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -48,6 +48,7 @@
         <section id="record" class="tab active">
             <h2>学習を記録</h2>
             <!-- 教科選択ボタン -->
+            <input type="datetime-local" name="time" id="dateInput">
             <div id="subjectButtons" class="subject-button-group"></div>
             <input type="hidden" id="subjectInput" required>
             <input type="number" id="timeInput" placeholder="時間（分）" min="1">
@@ -59,16 +60,16 @@
         <section id="history" class="tab">
             <h2>履歴</h2>
             <select id="filterSelect" onchange="loadStudies()">
-                <option value="">すべて表示</option>
+                <option value="" selected>すべて表示</option>
             </select>
             <br>
             <label for="historyRangeSelect">表示範囲：</label>
             <select id="historyRangeSelect" onchange="loadStudies()">
-                <option value="day">今日</option>
+                <option value="day" selected>今日</option>
                 <option value="week">今週</option>
                 <option value="month">今月</option>
                 <option value="year">今年</option>
-                <option value="all" selected>全期間</option>
+                <option value="all">全期間</option>
             </select>
             <p id="totalTime"></p>
             <ul id="studyList"></ul>

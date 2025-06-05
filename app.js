@@ -2,9 +2,32 @@ const pd = supabase.createClient('https://ksvdggybgpwfivohbxgn.supabase.co', 'ey
 let subjects = new Set();
 let username;
 
+document.getElementById("dateInput").value = formatLocalDate();
+
+function formatLocalDate(now = new Date()) {
+    const pad = (n) => n.toString().padStart(2, '0');
+
+    // 年・月・日・曜日
+    const year = now.getFullYear();
+    const month = pad(now.getMonth() + 1); // 0から始まるため+1
+    const date = pad(now.getDate());
+    const day = ['日', '月', '火', '水', '木', '金', '土'][now.getDay()];
+
+    // 時・分・秒
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+    const seconds = pad(now.getSeconds());
+
+    // 表示用に整形
+    const formatted = `${year}-${month}-${date}T${hours}:${minutes}`;
+
+    return formatted;
+}
+
 function switchTab(id) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    if (id === 'record') document.getElementById("dateInput").value = formatLocalDate();
     if (id === 'history') loadStudies();
     if (id === 'graph') drawChart();
 }
@@ -13,6 +36,7 @@ async function saveStudy() {
     const subject = document.getElementById('subjectInput').value.trim();
     const time = parseInt(document.getElementById('timeInput').value.trim(), 10);
     const content = document.getElementById('studyInput').value.trim();
+    const date = document.getElementById("dateInput").value.trim() || new Date().toLocaleString("ja-JP", { timeZone: "JST" })
 
     if (!subject || !content || isNaN(time) || time <= 0) {
         alert('正しく入力してください');
@@ -26,7 +50,7 @@ async function saveStudy() {
         subject,
         time,
         content,
-        date: new Date().toISOString()
+        date
     });
 
     if (error) {
@@ -55,7 +79,7 @@ async function loadStudies() {
     }
 
     const filtered = data.filter(d => {
-        const matchSubject = filter === '' || d.subject === filter;
+        const matchSubject = range === '' || d.subject === range;
         const matchRange = (() => {
             const dDate = new Date(d.date);
             switch (range) {
@@ -86,15 +110,47 @@ async function loadStudies() {
         const dateContainer = document.createElement("small");
         dateContainer.textContent = `${formatDate(d)} - ${username}`;
 
+        const timeContainer = document.createElement("div");
+        const fullBlocks = Math.floor(time / 60);  // 60分単位のバー数
+        const remainingMinutes = time % 60;        // 余りの分数
+
+        // 60分単位のバー（幅100%）
+        for (let i = 0; i < fullBlocks; i++) {
+            const timeBar = document.createElement("span");
+            timeBar.style.display = 'block';
+            timeBar.style.width = '100%';
+            timeBar.style.color = '#121212';
+            timeBar.style.backgroundColor = '#4caf50'; // 緑系
+            timeBar.style.marginBottom = '2px';
+            timeBar.textContent = `60分`;
+            timeBar.style.textAlign = 'center';
+            timeContainer.appendChild(timeBar);
+        }
+
+        // 残りのバー（幅を60分換算で割合表示）
+        if (remainingMinutes > 0) {
+            time = time % 60;
+            const timeBar = document.createElement("span");
+            timeBar.style.display = 'block';
+            timeBar.style.width = `${(remainingMinutes / 60) * 100}%`;
+            timeBar.style.color = '#121212';
+            timeBar.style.backgroundColor = '#81c784'; // 少し薄い緑
+            timeBar.textContent = `${time}分`;
+            timeBar.style.textAlign = 'center';
+            timeContainer.appendChild(timeBar);
+        }
+
         const body = document.createElement("p");
-        body.innerHTML = `${time}分間<br>${content}`
+        body.textContent = content; // 安全なテキスト出力
 
         div.appendChild(title);
         div.appendChild(dateContainer);
+        div.appendChild(timeContainer);
         div.appendChild(body);
 
         list.appendChild(div);
         list.appendChild(document.createElement("hr"));
+
         total += time;
     });
 
@@ -279,13 +335,30 @@ function settingUsername() {
     localStorage.setItem('username', username);
 }
 
+async function loadUser() {
+    const { data, error } = await pd.from('studies').select('username');
+    if (error) {
+        alert('ユーザー名の取得に失敗しました');
+        return;
+    }
+    const user = new Set(data.map(d => d.username));
+    const userContainer = document.getElementById("filterSelect");
+    user.forEach((user) => {
+        const opt = document.createElement("option");
+        opt.textContent = user;
+        opt.value = user;
+        userContainer.appendChild(opt);
+    })
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     await loadSubjects();
     loadStudies();
+    loadUser();
     renderSubjectButtons();
     document.getElementById("userName").value = localStorage.getItem("username");
     settingUsername();
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js');
+        navigator.serviceWorker.register('service-worker.js?v=1.3');
     }
 });
