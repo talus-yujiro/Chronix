@@ -67,7 +67,7 @@ async function saveStudy() {
 }
 
 async function loadStudies() {
-    const filter = document.getElementById('filterSelect').value;
+    const filter = document.getElementById('filterSelect')?.value;
     const range = document.getElementById('historyRangeSelect')?.value || 'all';
     const now = new Date();
 
@@ -79,9 +79,10 @@ async function loadStudies() {
     }
 
     const filtered = data.filter(d => {
-        const matchSubject = range === '' || d.subject === range;
+        const matchUser = !filter || d.username === filter;
+        const dDate = new Date(d.date);
+
         const matchRange = (() => {
-            const dDate = new Date(d.date);
             switch (range) {
                 case 'day': return isSameDay(dDate, now);
                 case 'week': return isSameWeekMonday(dDate, now);
@@ -91,8 +92,10 @@ async function loadStudies() {
                 default: return true;
             }
         })();
-        return matchSubject && matchRange;
+
+        return matchUser && matchRange;
     });
+
 
     const list = document.getElementById('studyList');
     list.innerHTML = '';
@@ -114,6 +117,8 @@ async function loadStudies() {
         const fullBlocks = Math.floor(time / 60);  // 60分単位のバー数
         const remainingMinutes = time % 60;        // 余りの分数
 
+        let isFirst = false;
+
         // 60分単位のバー（幅100%）
         for (let i = 0; i < fullBlocks; i++) {
             const timeBar = document.createElement("span");
@@ -122,7 +127,8 @@ async function loadStudies() {
             timeBar.style.color = '#121212';
             timeBar.style.backgroundColor = '#4caf50'; // 緑系
             timeBar.style.marginBottom = '2px';
-            timeBar.textContent = `60分`;
+            timeBar.textContent = isFirst === false ? `${time}分` : ' ';
+            isFirst = true;
             timeBar.style.textAlign = 'center';
             timeContainer.appendChild(timeBar);
         }
@@ -135,7 +141,7 @@ async function loadStudies() {
             timeBar.style.width = `${(remainingMinutes / 60) * 100}%`;
             timeBar.style.color = '#121212';
             timeBar.style.backgroundColor = '#81c784'; // 少し薄い緑
-            timeBar.textContent = `${time}分`;
+            timeBar.textContent = isFirst === true ? '' : `${time}分`;
             timeBar.style.textAlign = 'center';
             timeContainer.appendChild(timeBar);
         }
@@ -208,7 +214,14 @@ async function drawChart() {
     const ctx = document.getElementById('studyChart').getContext('2d');
     if (chartInstance) chartInstance.destroy();
 
-    const { data, error } = await pd.from('studies').select('*');
+    // 選択されたユーザーIDを取得
+    const selectedUser = document.getElementById('userSelect').value;
+
+    // Supabaseから選択ユーザーのデータを取得
+    const { data, error } = await pd
+        .from('studies')
+        .select('*')
+        .eq('username', selectedUser); // ←ここを追加
 
     if (error) {
         alert('グラフデータの取得に失敗しました');
@@ -343,11 +356,18 @@ async function loadUser() {
     }
     const user = new Set(data.map(d => d.username));
     const userContainer = document.getElementById("filterSelect");
+    const userSelect = document.getElementById("userSelect");
     user.forEach((user) => {
         const opt = document.createElement("option");
         opt.textContent = user;
         opt.value = user;
         userContainer.appendChild(opt);
+    });
+    user.forEach((user) => {
+        const opt = document.createElement("option");
+        opt.textContent = user;
+        opt.value = user;
+        userSelect.appendChild(opt);
     })
 }
 
@@ -358,7 +378,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderSubjectButtons();
     document.getElementById("userName").value = localStorage.getItem("username");
     settingUsername();
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js?v=1.3');
-    }
 });
