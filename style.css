@@ -8,8 +8,7 @@
 
 html {
     background: #121212;
-    font-family: 'Inter', 'Noto Sans JP' sans-serif;
-    overflow: hidden;
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
 }
 
 body {
@@ -18,24 +17,27 @@ body {
     color: #e0e0e0;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 h1 {
     font-family: 'Geo Regular';
     margin: 1rem;
-    font-size: 5rem;
+    font-size: 4vw;
 }
 
 main {
     flex: 1;
-    padding: 1em 1em 5em;
+    padding: 1em;
     margin-bottom: 6rem;
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
 }
 
 .tab {
     display: none;
-    overflow: hidden;
 }
 
 .tab.active {
@@ -49,7 +51,11 @@ main {
     border-top: 1px solid #333;
     position: fixed;
     bottom: 0;
-    width: 100vw;
+    width: 100%;
+    max-width: 960px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
 }
 
 .bottom-nav button {
@@ -60,6 +66,7 @@ main {
     color: #ccc;
     font-size: 1em;
     text-align: center;
+    cursor: pointer;
 }
 
 .bottom-nav i {
@@ -68,7 +75,9 @@ main {
 }
 
 input,
-button {
+button,
+select,
+textarea {
     padding: 0.5em;
     font-size: 1em;
     margin: 0.5em 0;
@@ -90,16 +99,17 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    width: fit-content;
+    white-space: nowrap;
 }
 
 .subject-button.selected {
     background-color: #00bcd4;
-    /* 選択時のハイライト */
 }
 
 #studyChart {
-    height: 100%;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
 }
 
 .study-list {
@@ -109,37 +119,57 @@ button {
 
 .setting-item {
     display: flex;
-    flex: 1;
-    width: 100%;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
     border-bottom: 2px solid #e0e0e0;
+    cursor: pointer;
 }
 
 .setting-item::after {
     content: '＞';
-    font-weight: bolder;
+    font-weight: bold;
 }
 
 .setting-item h3 {
-    margin: none;
+    margin: 0;
 }
 
 .copyright-container {
     display: flex;
-    flex: 1;
     flex-direction: column;
     align-items: center;
+    text-align: center;
 }
 
 .icon-list {
     display: flex;
-    justify-content: space-evenly;
-    align-content: center;
-    align-items: center;
+    gap: 2rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .icon-list img {
-    width: 20vw;
-    height: 20vw;
+    width: 80px;
+    height: 80px;
+}
+
+/* レスポンシブ対応 */
+@media screen and (min-width: 768px) {
+    h1 {
+        font-size: 3rem;
+    }
+
+    .subject-button {
+        font-size: 1rem;
+    }
+
+    .bottom-nav i {
+        font-size: 1.5em;
+    }
+
+    .bottom-nav button {
+        font-size: 1rem;
+    }
 }
