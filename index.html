@@ -123,11 +123,19 @@
         </section>
     </main>
 
-    <nav class="bottom-nav">
-        <button onclick="switchTab('record')"><i class="fa-solid fa-pen"></i> 記録</button>
-        <button onclick="switchTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> 履歴</button>
-        <button onclick="switchTab('graph')"><i class="fa-solid fa-chart-bar"></i> グラフ</button>
-        <button onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> 設定</button>
+    <nav class="side-nav">
+        <div class="nav-logo">
+            <h1>Chronix</h1>
+        </div>
+        <div class="nav-buttons">
+            <button onclick="switchTab('record')"><i class="fa-solid fa-pen"></i><span>記録</span></button>
+            <button onclick="switchTab('history')"><i class="fa-solid fa-clock-rotate-left"></i><span>履歴</span></button>
+            <button onclick="switchTab('graph')"><i class="fa-solid fa-chart-bar"></i><span>グラフ</span></button>
+            <button onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i><span>設定</span></button>
+        </div>
+        <div class="nav-footer">
+            <p>&copy; 2025 talus</p>
+        </div>
     </nav>
 
     <script src="app.js"></script>
